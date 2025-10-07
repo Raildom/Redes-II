@@ -53,36 +53,36 @@ def exemplo_endpoints():
     print("\n=== Testando Todos os Endpoints ===")
     
     servidor = "76.1.0.10"  # Servidor sequencial
-    client = HTTPClient(servidor)
+    cliente = ClienteHTTP(servidor)
     
     endpoints = [
         ('GET', '/'),
         ('GET', '/status'),
-        ('GET', '/fast'),
-        ('GET', '/medium'),
-        ('GET', '/slow'),
+        ('GET', '/rapido'),
+        ('GET', '/medio'),
+        ('GET', '/lento'),
         ('POST', '/data')
     ]
     
     for method, path in endpoints:
         print(f"\nTestando {method} {path}:")
-        resultado = client.send_request(method, path)
+        resultado = cliente.enviar_requisicao(method, path)
         
-        if resultado['success']:
-            print(f"   ✓ Status: {resultado['status_code']}")
-            print(f"   ✓ Tempo: {resultado['response_time']:.4f}s")
+        if resultado['sucesso']:
+            print(f"   ✓ Status: {resultado['codigo_status']}")
+            print(f"   ✓ Tempo: {resultado['tempo_resposta']:.4f}s")
             
             # Mostra parte da resposta
-            if resultado['body']:
+            if resultado['corpo']:
                 try:
                     import json
-                    data = json.loads(resultado['body'])
-                    print(f"   ✓ Tipo de servidor: {data.get('server_type', 'N/A')}")
-                    print(f"   ✓ Mensagem: {data.get('message', 'N/A')[:50]}...")
+                    data = json.loads(resultado['corpo'])
+                    print(f"   ✓ Tipo de servidor: {data.get('tipo_servidor', 'N/A')}")
+                    print(f"   ✓ Mensagem: {data.get('mensagem', 'N/A')[:50]}...")
                 except:
-                    print(f"   ✓ Resposta: {resultado['body'][:50]}...")
+                    print(f"   ✓ Resposta: {resultado['corpo'][:50]}...")
         else:
-            print(f"   ✗ Erro: {resultado.get('error', 'Desconhecido')}")
+            print(f"   ✗ Erro: {resultado.get('erro', 'Desconhecido')}")
 
 def exemplo_teste_carga():
     """Exemplo de teste de carga simples"""
@@ -99,34 +99,34 @@ def exemplo_teste_carga():
     
     # Testa servidor sequencial
     print("\n1. Servidor Sequencial:")
-    tester_seq = LoadTester(servidor_seq)
-    resultado_seq = tester_seq.concurrent_test(
-        num_clientes, requisicoes_por_cliente, 'GET', '/fast'
+    testador_seq = TestadorCarga(servidor_seq)
+    resultado_seq = testador_seq.teste_concorrente(
+        num_clientes, requisicoes_por_cliente, 'GET', '/rapido'
     )
     
-    print(f"   Tempo total: {resultado_seq['total_time']:.2f}s")
-    print(f"   Taxa de sucesso: {resultado_seq['summary']['success_rate']:.2%}")
-    print(f"   Tempo médio: {resultado_seq['summary']['avg_response_time']:.4f}s")
+    print(f"   Tempo total: {resultado_seq['tempo_total']:.2f}s")
+    print(f"   Taxa de sucesso: {resultado_seq['resumo']['taxa_sucesso']:.2%}")
+    print(f"   Tempo médio: {resultado_seq['resumo']['tempo_resposta_medio']:.4f}s")
     
     # Pequena pausa
     time.sleep(2)
     
     # Testa servidor concorrente
     print("\n2. Servidor Concorrente:")
-    tester_conc = LoadTester(servidor_conc)
-    resultado_conc = tester_conc.concurrent_test(
-        num_clientes, requisicoes_por_cliente, 'GET', '/fast'
+    testador_conc = TestadorCarga(servidor_conc)
+    resultado_conc = testador_conc.teste_concorrente(
+        num_clientes, requisicoes_por_cliente, 'GET', '/rapido'
     )
     
-    print(f"   Tempo total: {resultado_conc['total_time']:.2f}s")
-    print(f"   Taxa de sucesso: {resultado_conc['summary']['success_rate']:.2%}")
-    print(f"   Tempo médio: {resultado_conc['summary']['avg_response_time']:.4f}s")
+    print(f"   Tempo total: {resultado_conc['tempo_total']:.2f}s")
+    print(f"   Taxa de sucesso: {resultado_conc['resumo']['taxa_sucesso']:.2%}")
+    print(f"   Tempo médio: {resultado_conc['resumo']['tempo_resposta_medio']:.4f}s")
     
     # Comparação
-    if (resultado_seq['summary']['avg_response_time'] > 0 and 
-        resultado_conc['summary']['avg_response_time'] > 0):
+    if (resultado_seq['resumo']['tempo_resposta_medio'] > 0 and 
+        resultado_conc['resumo']['tempo_resposta_medio'] > 0):
         
-        speedup = resultado_seq['summary']['avg_response_time'] / resultado_conc['summary']['avg_response_time']
+        speedup = resultado_seq['resumo']['tempo_resposta_medio'] / resultado_conc['resumo']['tempo_resposta_medio']
         print(f"\n3. Comparação:")
         if speedup > 1:
             print(f"   → Servidor concorrente foi {speedup:.2f}x mais rápido")
@@ -138,12 +138,12 @@ def exemplo_comparacao_cenarios():
     print("\n=== Comparação de Cenários ===")
     
     servidor = "76.1.0.11"  # Servidor concorrente
-    client = HTTPClient(servidor)
+    cliente = ClienteHTTP(servidor)
     
     cenarios = [
-        ('/fast', 'Processamento Rápido'),
-        ('/medium', 'Processamento Médio'),
-        ('/slow', 'Processamento Lento')
+        ('/rapido', 'Processamento Rápido'),
+        ('/medio', 'Processamento Médio'),
+        ('/lento', 'Processamento Lento')
     ]
     
     for path, nome in cenarios:
@@ -152,9 +152,9 @@ def exemplo_comparacao_cenarios():
         # Faz 3 requisições para calcular média
         tempos = []
         for i in range(3):
-            resultado = client.send_request('GET', path)
-            if resultado['success']:
-                tempos.append(resultado['response_time'])
+            resultado = cliente.enviar_requisicao('GET', path)
+            if resultado['sucesso']:
+                tempos.append(resultado['tempo_resposta'])
             time.sleep(0.5)
         
         if tempos:
@@ -177,7 +177,7 @@ if __name__ == "__main__":
         
         print("\n=== Exemplos Concluídos ===")
         print("Para testes mais completos, execute:")
-        print("  python3 tests/automated_tests.py --full")
+        print("  python3 testes/testes_automatizados.py --completo")
         
     except KeyboardInterrupt:
         print("\n\nExecução interrompida pelo usuário")
