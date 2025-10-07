@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Servidor Sequencial
+  servidor-sequencial:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: servidor_sequencial
+    networks:
+      redes2_network:
+        ipv4_address: 76.1.0.10
+    ports:
+      - "8080:8080"
+    command: python src/servidor_sequencial.py
+    volumes:
+      - ../src:/app/src
+      - ../resultados:/app/resultados
+
+  # Servidor Concorrente
+  servidor-concorrente:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: servidor_concorrente
+    networks:
+      redes2_network:
+        ipv4_address: 76.1.0.11
+    ports:
+      - "8081:8080"
+    command: python src/servidor_concorrente.py
+    volumes:
+      - ../src:/app/src
+      - ../resultados:/app/resultados
+
+  # Cliente de teste
+  cliente-teste:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: cliente_teste
+    networks:
+      redes2_network:
+        ipv4_address: 76.1.0.20
+    command: tail -f /dev/null  # Mantém o container ativo
+    volumes:
+      - ../src:/app/src
+      - ../testes:/app/testes
+      - ../resultados:/app/resultados
+    depends_on:
+      - servidor-sequencial
+      - servidor-concorrente
+
+networks:
+  redes2_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 76.1.0.0/16
