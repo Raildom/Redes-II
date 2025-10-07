@@ -50,7 +50,7 @@ test_connectivity() {
     echo ""
     echo "=== Testando conectividade dos servidores ==="
     
-    docker exec test_client python3 tests/automated_tests.py
+    docker exec cliente_teste python3 testes/testes_automatizados.py
 }
 
 # Função para executar testes completos
@@ -59,7 +59,7 @@ run_full_tests() {
     echo "=== Executando testes completos ==="
     echo "Isso pode demorar alguns minutos..."
     
-    docker exec test_client python3 tests/automated_tests.py --full
+    docker exec cliente_teste python3 testes/testes_automatizados.py --full
 }
 
 # Função para gerar análises e gráficos
@@ -67,7 +67,7 @@ generate_analysis() {
     echo ""
     echo "=== Gerando análises e gráficos ==="
     
-    docker exec test_client python3 tests/analyze_results.py
+    docker exec cliente_teste python3 testes/analisar_resultados.py
 }
 
 # Função para parar containers

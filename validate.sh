@@ -55,19 +55,19 @@ echo "1. Verificando estrutura de arquivos..."
 # Testa estrutura de diretórios
 test_dir "src" "Diretório src"
 test_dir "docker" "Diretório docker"
-test_dir "tests" "Diretório tests"
+test_dir "testes" "Diretório testes"
 
 # Testa arquivos principais
-test_file "src/config.py" "Configuração"
-test_file "src/sequential_server.py" "Servidor sequencial"
-test_file "src/concurrent_server.py" "Servidor concorrente"
-test_file "src/client.py" "Cliente HTTP"
+test_file "src/configuracao.py" "Configuração"
+test_file "src/servidor_sequencial.py" "Servidor sequencial"
+test_file "src/servidor_concorrente.py" "Servidor concorrente"
+test_file "src/cliente.py" "Cliente HTTP"
 test_file "docker/Dockerfile" "Dockerfile"
 test_file "docker/docker-compose.yml" "Docker Compose"
-test_file "tests/automated_tests.py" "Testes automatizados"
-test_file "tests/analyze_results.py" "Análise de resultados"
+test_file "testes/testes_automatizados.py" "Testes automatizados"
+test_file "testes/analisar_resultados.py" "Análise de resultados"
 test_file "run_project.sh" "Script principal"
-test_file "requirements.txt" "Requirements"
+test_file "requisitos.txt" "Requirements"
 test_file "Makefile" "Makefile"
 
 echo ""
@@ -87,13 +87,13 @@ echo ""
 echo "4. Validando configurações..."
 
 # Verifica se a configuração está correta
-test_item "Configuração Python" "python3 -c 'import sys; sys.path.append(\"src\"); from config import *; print(MATRICULA)'" \
+test_item "Configuração Python" "python3 -c 'import sys; sys.path.append(\"src\"); from configuracao import *; print(MATRICULA)'" \
     "Configuração carregada" "Erro na configuração"
 
 echo ""
 echo "5. Testando sintaxe dos scripts Python..."
 
-for script in src/*.py tests/*.py; do
+for script in src/*.py testes/*.py; do
     if [ -f "$script" ]; then
         script_name=$(basename "$script")
         test_item "Sintaxe $script_name" "python3 -m py_compile '$script'" \
