@@ -17,27 +17,27 @@ check_docker() {
     fi
 }
 
-# Função para construir e iniciar os containers
-start_containers() {
-    echo "=== Construindo e iniciando containers ==="
+# Função para construir e iniciar os contêineres
+iniciar_conteineres() {
+    echo "=== Construindo e iniciando contêineres ==="
     
     cd docker
     
-    # Para containers existentes se estiverem rodando
+    # Para contêineres existentes se estiverem rodando
     docker-compose down 2>/dev/null || true
     
-    # Constrói e inicia os containers
+    # Constrói e inicia os contêineres
     docker-compose up --build -d
     
-    echo "Aguardando containers iniciarem..."
+    echo "Aguardando contêineres iniciarem..."
     sleep 10
     
-    # Verifica se os containers estão rodando
+    # Verifica se os contêineres estão rodando
     if docker-compose ps | grep -q "Up"; then
-        echo "✓ Containers iniciados com sucesso"
+        echo "✓ Contêineres iniciados com sucesso"
         docker-compose ps
     else
-        echo "✗ Erro ao iniciar containers"
+        echo "✗ Erro ao iniciar contêineres"
         docker-compose logs
         exit 1
     fi
@@ -46,7 +46,7 @@ start_containers() {
 }
 
 # Função para executar testes de conectividade
-test_connectivity() {
+testar_conectividade() {
     echo ""
     echo "=== Testando conectividade dos servidores ==="
     
@@ -54,7 +54,7 @@ test_connectivity() {
 }
 
 # Função para executar testes completos
-run_full_tests() {
+executar_testes_completos() {
     echo ""
     echo "=== Executando testes completos ==="
     echo "Isso pode demorar alguns minutos..."
@@ -63,23 +63,21 @@ run_full_tests() {
 }
 
 # Função para gerar análises e gráficos
-generate_analysis() {
+gerar_analises() {
     echo ""
     echo "=== Gerando análises e gráficos ==="
     
     docker exec cliente_teste python3 testes/analisar_resultados.py
 }
 
-# Função para parar containers
-stop_containers() {
+# Função para parar contêineres
+parar_conteineres() {
     echo ""
-    echo "=== Parando containers ==="
+    echo "=== Parando contêineres ==="
     
     cd docker
     docker-compose down
     cd ..
-    
-    echo "✓ Containers parados"
 }
 
 # Função para limpar tudo
@@ -115,18 +113,18 @@ enter_test_container() {
 }
 
 # Menu principal
-show_menu() {
+mostrar_menu() {
     echo ""
     echo "=== MENU PRINCIPAL ==="
-    echo "1) Iniciar containers"
+    echo "1) Iniciar contêineres"
     echo "2) Testar conectividade"
     echo "3) Executar testes completos"
     echo "4) Gerar análises e gráficos"
     echo "5) Mostrar logs"
-    echo "6) Entrar no container de teste"stop_containers
-    echo "7) Parar containers"
+    echo "6) Entrar no contêiner de teste"
+    echo "7) Parar contêineres"
     echo "8) Limpar ambiente"
-    echo "9) Executar tudo (inicio ao fim)"
+    echo "9) Executar tudo (início ao fim)"
     echo "0) Sair"
     echo ""
 }
@@ -137,22 +135,22 @@ check_docker
 # Se há argumentos, executa diretamente
 if [ $# -gt 0 ]; then
     case $1 in
-        "start")
-            start_containers
+        "start"|"iniciar")
+            iniciar_conteineres
             ;;
-        "test")
-            test_connectivity
+        "test"|"testar")
+            testar_conectividade
             ;;
-        "full-test")
-            run_full_tests
+        "full-test"|"teste-completo")
+            executar_testes_completos
             ;;
-        "analyze")
-            generate_analysis
+        "analyze"|"analisar")
+            gerar_analises
             ;;
-        "stop")
-            stop_containers
+        "stop"|"parar")
+            parar_conteineres
             ;;
-        "clean")
+        "clean"|"limpar")
             cleanup
             ;;
         "logs")
@@ -161,23 +159,23 @@ if [ $# -gt 0 ]; then
         "shell")
             enter_test_container
             ;;
-        "all")
-            start_containers
-            test_connectivity
+        "all"|"tudo")
+            iniciar_conteineres
+            testar_conectividade
             echo ""
             read -p "Executar testes completos? (pode demorar 10-15 minutos) [y/N]: " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                run_full_tests
-                generate_analysis
+                executar_testes_completos
+                gerar_analises
                 echo ""
                 echo "=== Projeto concluído! ==="
-                echo "Resultados disponíveis em ./results/"
+                echo "Resultados disponíveis em ./resultados/"
             fi
             ;;
         *)
             echo "Opção inválida: $1"
-            echo "Opções: start, test, full-test, analyze, stop, clean, logs, shell, all"
+            echo "Opções: iniciar, testar, teste-completo, analisar, parar, limpar, logs, shell, tudo"
             exit 1
             ;;
     esac
@@ -186,21 +184,21 @@ fi
 
 # Menu interativo
 while true; do
-    show_menu
+    mostrar_menu
     read -p "Escolha uma opção: " choice
     
     case $choice in
         1)
-            start_containers
+            iniciar_conteineres
             ;;
         2)
-            test_connectivity
+            testar_conectividade
             ;;
         3)
-            run_full_tests
+            executar_testes_completos
             ;;
         4)
-            generate_analysis
+            gerar_analises
             ;;
         5)
             show_logs
@@ -209,23 +207,23 @@ while true; do
             enter_test_container
             ;;
         7)
-            stop_containers
+            parar_conteineres
             ;;
         8)
             cleanup
             ;;
         9)
-            start_containers
-            test_connectivity
+            iniciar_conteineres
+            testar_conectividade
             echo ""
             read -p "Executar testes completos? (pode demorar 10-15 minutos) [y/N]: " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                run_full_tests
-                generate_analysis
+                executar_testes_completos
+                gerar_analises
                 echo ""
                 echo "=== Projeto concluído! ==="
-                echo "Resultados disponíveis em ./results/"
+                echo "Resultados disponíveis em ./resultados/"
             fi
             ;;
         0)

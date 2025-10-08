@@ -2,7 +2,7 @@
 
 ## 🎯 Projeto Concluído com Sucesso
 
-**Aluno**: [SEU NOME AQUI]  
+**Aluno**: [Raildom da Rocha Sobrinho]  
 **Matrícula**: 20239057601  
 **Disciplina**: Redes de Computadores II  
 **Data**: Outubro 2025  
@@ -12,17 +12,17 @@
 ## ✅ Todos os Requisitos Implementados
 
 ### 1. ✅ Servidores Web Implementados
-- **Servidor Sequencial** (`src/sequential_server.py`)
-- **Servidor Concorrente** (`src/concurrent_server.py`)
-- Ambos usam sockets TCP de baixo nível
+- **Servidor Sequencial** (`src/servidor_sequencial.py`)
+- **Servidor Concorrente** (`src/servidor_concorrente.py`)
+- Ambos usam soquetes TCP de baixo nível
 - Implementação completa do protocolo HTTP
 
 ### 2. ✅ Ambiente Docker Configurado
-- Subnet: **76.1.0.0/16** (baseada nos últimos 4 dígitos da matrícula)
-- 3 containers Ubuntu com Python
+- Sub-rede: **76.1.0.0/16** (baseada nos últimos 4 dígitos da matrícula)
+- 3 contêineres Ubuntu com Python
 - Rede isolada para simulação
 
-### 3. ✅ Cabeçalho HTTP Customizado
+### 3. ✅ Cabeçalho HTTP Personalizado
 - Campo: `X-Custom-ID: cbe060477afed5af71ec9dfb1c4dd720`
 - Hash MD5 calculado sobre matrícula + nome
 - Validação automática em todas as requisições
@@ -41,10 +41,10 @@
 
 ## 🚀 Como Executar o Projeto
 
-### Execução Completa (Recomendada)
+### Execução Automática (Recomendado)
 ```bash
-# No diretório do projeto:
-./run_project.sh all
+# Executa todo o projeto do início ao fim
+./run_project.sh tudo
 ```
 
 ### Execução Passo a Passo
@@ -52,28 +52,57 @@
 # 1. Validar projeto
 ./validate.sh
 
-# 2. Iniciar containers
-./run_project.sh start
+# 2. Iniciar contêineres
+./run_project.sh iniciar
 
 # 3. Testar conectividade
-./run_project.sh test
+./run_project.sh testar
 
 # 4. Executar testes completos (10-15 minutos)
-./run_project.sh full-test
+./run_project.sh teste-completo
 
 # 5. Gerar análises e gráficos
-./run_project.sh analyze
+./run_project.sh analisar
 
-# 6. Parar containers
-./run_project.sh stop
+# 6. Parar contêineres
+./run_project.sh parar
 ```
 
 ### Usando Makefile (Alternativo)
 ```bash
-make all        # Execução completa
-make start      # Iniciar containers
-make test       # Testar conectividade
-make stop       # Parar containers
+make tudo       # Execução completa
+make iniciar    # Iniciar contêineres
+make testar     # Testar conectividade
+make parar      # Parar contêineres
+```
+
+### Execução Passo a Passo
+```bash
+# 1. Validar projeto
+./validate.sh
+
+# 2. Iniciar contêineres
+./run_project.sh iniciar
+
+# 3. Testar conectividade
+./run_project.sh testar
+
+# 4. Executar testes completos (10-15 minutos)
+./run_project.sh teste-completo
+
+# 5. Gerar análises e gráficos
+./run_project.sh analisar
+
+# 6. Parar contêineres
+./run_project.sh parar
+```
+
+### Usando Makefile (Alternativo)
+```bash
+make tudo       # Execução completa
+make iniciar    # Iniciar contêineres
+make testar     # Testar conectividade
+make parar      # Parar contêineres
 ```
 
 ---
@@ -81,26 +110,26 @@ make stop       # Parar containers
 ## 📊 Resultados Gerados
 
 ### Arquivos de Saída:
-- `results/test_results.json` - Dados brutos dos testes
-- `results/performance_report.txt` - Relatório com conclusões
-- `results/plots/` - Gráficos de análise:
-  - `response_time_comparison.png`
-  - `success_rate_comparison.png`
-  - `scalability_analysis.png`
-  - `scenario_comparison.png`
-  - `statistical_analysis.png`
+- `resultados/resultados_teste.json` - Dados brutos dos testes
+- `resultados/relatorio_desempenho.txt` - Relatório com conclusões
+- `resultados/graficos/` - Gráficos de análise:
+  - `comparacao_tempo_resposta.png`
+  - `comparacao_taxa_sucesso.png`
+  - `analise_escalabilidade.png`
+  - `comparacao_cenarios.png`
+  - `analise_estatistica.png`
 
 ---
 
 ## 🔧 Estrutura Técnica
 
-### Endpoints Implementados:
+### Pontos de Acesso Implementados:
 - `GET /` - Página inicial
-- `GET /status` - Status do servidor
-- `GET /fast` - Processamento rápido
-- `GET /medium` - Processamento médio (0.5s)
-- `GET /slow` - Processamento lento (2s)
-- `POST /data` - Recebimento de dados
+- `GET /status` - Estado do servidor
+- `GET /rapido` - Processamento rápido
+- `GET /medio` - Processamento médio (0.5s)
+- `GET /lento` - Processamento lento (2s)
+- `POST /dados` - Recebimento de dados
 
 ### Configuração de Rede:
 - **Servidor Sequencial**: 76.1.0.10:8080
@@ -108,9 +137,9 @@ make stop       # Parar containers
 - **Cliente de Teste**: 76.1.0.20
 
 ### Tecnologias Utilizadas:
-- Python 3.9 (sockets TCP)
-- Docker & Docker Compose
-- Threading para concorrência
+- Python 3.9 (soquetes TCP)
+- Docker e Docker Compose
+- Multithreading para concorrência
 - Matplotlib/Seaborn para gráficos
 
 ---

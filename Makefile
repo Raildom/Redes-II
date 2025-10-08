@@ -1,39 +1,40 @@
 # Makefile para o projeto Redes II
 # Facilita a execução dos comandos principais
 
-.PHONY: help start test full-test analyze stop clean logs shell all status
+.PHONY: ajuda iniciar testar teste-completo analisar parar limpar logs shell tudo status verificar configurar help start test full-test analyze stop clean all check setup
 
 # Comando padrão
-help:
+all: ajuda
+ajuda:
 	@echo "=== Projeto Redes II - Servidor Web Sequencial vs Concorrente ==="
 	@echo "Matrícula: 20239057601"
 	@echo ""
 	@echo "Comandos disponíveis:"
-	@echo "  make start      - Iniciar containers Docker"
-	@echo "  make test       - Testar conectividade dos servidores"
-	@echo "  make full-test  - Executar testes completos (10-15 min)"
-	@echo "  make analyze    - Gerar gráficos e análises"
-	@echo "  make logs       - Mostrar logs dos containers"
-	@echo "  make shell      - Entrar no container de teste"
-	@echo "  make status     - Status dos containers"
-	@echo "  make stop       - Parar containers"
-	@echo "  make clean      - Limpar ambiente Docker"
-	@echo "  make all        - Executar tudo (completo)"
+	@echo "  make iniciar         - Iniciar contêineres Docker"
+	@echo "  make testar          - Testar conectividade dos servidores"
+	@echo "  make teste-completo  - Executar testes completos (10-15 min)"
+	@echo "  make analisar        - Gerar gráficos e análises"
+	@echo "  make logs            - Mostrar logs dos contêineres"
+	@echo "  make shell           - Entrar no contêiner de teste"
+	@echo "  make status          - Estado dos contêineres"
+	@echo "  make parar           - Parar contêineres"
+	@echo "  make limpar          - Limpar ambiente Docker"
+	@echo "  make tudo            - Executar tudo (completo)"
 	@echo ""
 	@echo "Para execução interativa: ./run_project.sh"
 
 # Comandos principais
-start:
-	./run_project.sh start
+iniciar:
+	./run_project.sh iniciar
 
-test:
-	./run_project.sh test
+testar:
+	./run_project.sh testar
 
-full-test:
-	./run_project.sh full-test
+teste-completo:
+	./run_project.sh teste-completo
 
-analyze:
-	./run_project.sh analyze
+analisar:
+	./run_project.sh analisar
 
 logs:
 	./run_project.sh logs
@@ -41,32 +42,44 @@ logs:
 shell:
 	./run_project.sh shell
 
-stop:
-	./run_project.sh stop
+parar:
+	./run_project.sh parar
 
-clean:
-	./run_project.sh clean
+limpar:
+	./run_project.sh limpar
 
-all:
-	./run_project.sh all
+tudo:
+	./run_project.sh tudo
 
 # Comando adicional para verificar status
 status:
-	@echo "=== Status dos Containers ==="
-	@cd docker && docker-compose ps || echo "Containers não estão rodando"
+	@echo "=== Estado dos Contêineres ==="
+	@cd docker && docker-compose ps || echo "Contêineres não estão rodando"
 	@echo ""
 	@echo "=== Redes Docker ==="
-	@docker network ls | grep redes2 || echo "Rede não encontrada"
+	@docker network ls | grep rede_redes2 || echo "Rede não encontrada"
 
 # Comando para verificar pré-requisitos
-check:
+verificar:
 	@echo "=== Verificando Pré-requisitos ==="
 	@command -v docker >/dev/null 2>&1 && echo "✓ Docker instalado" || echo "✗ Docker não encontrado"
 	@command -v docker-compose >/dev/null 2>&1 && echo "✓ Docker Compose instalado" || echo "✗ Docker Compose não encontrado"
 	@docker info >/dev/null 2>&1 && echo "✓ Docker rodando" || echo "✗ Docker não está rodando"
 
-# Comando para setup inicial
-setup: check
-	@echo "=== Setup Inicial ==="
+# Comando para configuração inicial
+configurar: verificar
+	@echo "=== Configuração Inicial ==="
 	@echo "Projeto configurado e pronto para uso!"
-	@echo "Execute 'make start' para iniciar os containers"
+	@echo "Execute 'make iniciar' para iniciar os contêineres"
+
+# Mantém compatibilidade com comandos em inglês
+help: ajuda
+start: iniciar
+test: testar
+full-test: teste-completo
+analyze: analisar
+stop: parar
+clean: limpar
+all: tudo
+check: verificar
+setup: configurar
