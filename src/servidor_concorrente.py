@@ -10,7 +10,7 @@ from datetime import datetime
 from configuracao import PORTA_SERVIDOR, ID_CUSTOMIZADO, MAX_CONEXOES
 
 class ServidorWebConcorrente:
-    def __init__(self, host='0.0.0.0', porta=PORTA_SERVIDOR):
+    def __init__(self, host = '0.0.0.0', porta = PORTA_SERVIDOR):
         self.host = host
         self.porta = porta
         self.socket_servidor = None
@@ -92,10 +92,7 @@ class ServidorWebConcorrente:
                 requisicao_atual = self.contador_requisicoes
             
             # Gera resposta baseada no método e path
-            resposta = self.gerar_resposta(
-                metodo, caminho, id_customizado, tempo_inicio, 
-                requisicao_atual, id_conexao
-            )
+            resposta = self.gerar_resposta(metodo, caminho, id_customizado, tempo_inicio, requisicao_atual, id_conexao)
             
             # Envia resposta
             socket_cliente.send(resposta.encode('utf-8'))

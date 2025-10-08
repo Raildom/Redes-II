@@ -123,7 +123,7 @@ show_menu() {
     echo "3) Executar testes completos"
     echo "4) Gerar análises e gráficos"
     echo "5) Mostrar logs"
-    echo "6) Entrar no container de teste"
+    echo "6) Entrar no container de teste"stop_containers
     echo "7) Parar containers"
     echo "8) Limpar ambiente"
     echo "9) Executar tudo (inicio ao fim)"

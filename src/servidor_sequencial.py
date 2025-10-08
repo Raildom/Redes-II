@@ -10,7 +10,7 @@ from configuracao import PORTA_SERVIDOR, ID_CUSTOMIZADO
 import os
 
 class ServidorWebSequencial:
-    def __init__(self, host='0.0.0.0', porta=PORTA_SERVIDOR):
+    def __init__(self, host = '0.0.0.0', porta = PORTA_SERVIDOR):
         self.host = host
         self.porta = porta
         self.socket_servidor = None

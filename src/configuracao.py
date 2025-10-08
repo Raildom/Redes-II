@@ -5,7 +5,7 @@ import hashlib
 
 # Matrícula e informações do aluno
 MATRICULA = "20239057601"
-NOME_ALUNO = "Aluno"  # Substitua pelo seu nome
+NOME_ALUNO = "Raildom" 
 
 # Configuração de rede baseada nos últimos 4 dígitos da matrícula (7601)
 ULTIMOS_QUATRO_DIGITOS = MATRICULA[-4:]  # 7601
