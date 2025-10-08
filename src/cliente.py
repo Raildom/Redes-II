@@ -198,26 +198,6 @@ class TestadorCarga:
         return resumo
 
 if __name__ == "__main__":
-    #Teste simples
-    import sys
-    
-    if len(sys.argv) != 2:
-        print("Uso: python cliente.py <ip_servidor>")
-        sys.exit(1)
-    
-    ip_servidor = sys.argv[1]
-    
-    print(f"Testando servidor em {ip_servidor}:{PORTA_SERVIDOR}")
-    
-    cliente = ClienteHTTP(ip_servidor)
-    
-    #Teste básico
-    print("Executando teste básico...")
-    resultado = cliente.enviar_requisicao('GET', '/')
-    print(f"Resultado: {resultado}")
-    
-    #Teste de carga simples
-    print("\nExecutando teste de carga...")
-    testador = TestadorCarga(ip_servidor)
-    resultado_carga = testador.teste_concorrente(5, 2, 'GET', '/rapido')
-    print(f"Resumo do teste: {resultado_carga['resumo']}")
+    print("Este é o módulo cliente.py")
+    print("Para executar testes, use: python3 testes/teste_cliente.py")
+    print("Para testes automatizados, use: python3 testes/testes_automatizados.py")
