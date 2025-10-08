@@ -9,7 +9,8 @@ import time
 # Adiciona o diretório src ao path
 sys.path.append('/app/src')
 
-from cliente import ClienteHTTP, TestadorCarga
+from cliente import ClienteHTTP
+from teste_cliente import TestadorCarga
 from configuracao import ID_CUSTOMIZADO
 
 def exemplo_basico():

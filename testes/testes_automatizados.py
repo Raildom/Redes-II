@@ -12,7 +12,7 @@ import os
 # Adiciona o diretório src ao path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from cliente import TestadorCarga
+from teste_cliente import TestadorCarga
 from configuracao import ITERACOES_TESTE, CLIENTES_TESTE, TAMANHOS_REQUISICAO
 
 class TestadorAutomatizado:

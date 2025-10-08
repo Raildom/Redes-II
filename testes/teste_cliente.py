@@ -9,18 +9,104 @@ import os
 import time
 import json
 import argparse
+import threading
 from datetime import datetime
 
 # Adicionar diretório src ao path (um nível acima da pasta testes)
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 try:
-    from cliente import ClienteHTTP, TestadorCarga
+    from cliente import ClienteHTTP
     from configuracao import ID_CUSTOMIZADO, PORTA_SERVIDOR
 except ImportError as e:
     print(f"X Erro ao importar módulos: {e}")
     print("Certifique-se de estar no diretório correto do projeto")
     sys.exit(1)
+
+class TestadorCarga:
+    """Classe para executar testes de carga e concorrencia"""
+    def __init__(self, host_servidor, porta_servidor=PORTA_SERVIDOR):
+        self.cliente = ClienteHTTP(host_servidor, porta_servidor)
+        self.resultados = []
+        self.lock = threading.Lock()
+        
+    def teste_requisicao_unica(self, metodo='GET', caminho='/', id_cliente=None):
+        """Executa um unico teste de requisicao"""
+        resultado = self.cliente.enviar_requisicao(metodo, caminho)
+        resultado['id_cliente'] = id_cliente
+        resultado['timestamp'] = time.time()
+        
+        with self.lock:
+            self.resultados.append(resultado)
+        
+        return resultado
+    
+    def teste_concorrente(self, num_clientes, requisicoes_por_cliente, metodo='GET', caminho='/'):
+        # Executa teste com multiplos clientes simultaneos
+        threads = []
+        self.resultados = []
+        
+        print(f"Iniciando teste com {num_clientes} clientes, {requisicoes_por_cliente} requisicoes cada")
+        
+        tempo_inicio = time.time()
+        
+        for id_cliente in range(num_clientes):
+            thread = threading.Thread(
+                target=self._trabalhador_cliente,
+                args=(id_cliente, requisicoes_por_cliente, metodo, caminho)
+            )
+            threads.append(thread)
+            thread.start()
+        
+        # Aguarda todas as threads terminarem
+        for thread in threads:
+            thread.join()
+        
+        tempo_total = time.time() - tempo_inicio
+        
+        return {
+            'tempo_total': tempo_total,
+            'resultados': self.resultados,
+            'resumo': self._calcular_resumo()
+        }
+    
+    def _trabalhador_cliente(self, id_cliente, num_requisicoes, metodo, caminho):
+        # Worker para executar requisicoes de um cliente
+        for id_req in range(num_requisicoes):
+            resultado = self.teste_requisicao_unica(metodo, caminho, f"{id_cliente}-{id_req}")
+            if id_req % 10 == 0:  # Log a cada 10 requisicoes
+                print(f"Cliente {id_cliente}: {id_req + 1}/{num_requisicoes} requisicoes completadas")
+    
+    def _calcular_resumo(self):
+        # Calcula estatisticas dos resultados
+        if not self.resultados:
+            return {}
+        
+        resultados_sucesso = [r for r in self.resultados if r['sucesso']]
+        resultados_falha = [r for r in self.resultados if not r['sucesso']]
+        
+        if resultados_sucesso:
+            tempos_resposta = [r['tempo_resposta'] for r in resultados_sucesso]
+            
+            resumo = {
+                'total_requisicoes': len(self.resultados),
+                'requisicoes_sucesso': len(resultados_sucesso),
+                'requisicoes_falha': len(resultados_falha),
+                'taxa_sucesso': len(resultados_sucesso) / len(self.resultados),
+                'tempo_resposta_medio': sum(tempos_resposta) / len(tempos_resposta),
+                'tempo_resposta_min': min(tempos_resposta),
+                'tempo_resposta_max': max(tempos_resposta),
+                'tempo_total': max([r['timestamp'] for r in self.resultados]) - min([r['timestamp'] for r in self.resultados])
+            }
+        else:
+            resumo = {
+                'total_requisicoes': len(self.resultados),
+                'requisicoes_sucesso': 0,
+                'requisicoes_falha': len(resultados_falha),
+                'taxa_sucesso': 0
+            }
+        
+        return resumo
 
 class TestadorProjeto:
     """Classe para executar todos os testes do projeto"""
