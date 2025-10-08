@@ -5,42 +5,42 @@
 ### 📋 Requisitos Atendidos
 
 **✓ Servidor Web Sequencial (Síncrono)**
-- Implementado em `src/sequential_server.py`
+- Implementado em `src/servidor_sequencial.py`
 - Atende uma requisição por vez
-- Usa sockets TCP de baixo nível
+- Usa soquetes TCP de baixo nível
 - Implementa protocolo HTTP completo
 
 **✓ Servidor Web Concorrente (Assíncrono)**  
-- Implementado em `src/concurrent_server.py`
+- Implementado em `src/servidor_concorrente.py`
 - Múltiplas requisições simultâneas via threads
 - Pool de threads dinâmico
 - Implementa protocolo HTTP completo
 
 **✓ Configuração de Rede Docker**
-- Subnet baseada na matrícula: 76.1.0.0/16 (últimos 4 dígitos: 7601)
+- Sub-rede baseada na matrícula: 76.1.0.0/16 (últimos 4 dígitos: 7601)
 - Servidor Sequencial: 76.1.0.10:8080
 - Servidor Concorrente: 76.1.0.11:8080
 - Cliente de Teste: 76.1.0.20
 
-**✓ Cabeçalho HTTP Customizado**
+**✓ Cabeçalho HTTP Personalizado**
 - X-Custom-ID com hash MD5 da matrícula + nome
 - Valor: `cbe060477afed5af71ec9dfb1c4dd720`
 - Validação automática em todas as requisições
 
-**✓ Endpoints Implementados**
+**✓ Pontos de Acesso Implementados**
 - `GET /` - Página inicial
-- `GET /status` - Status do servidor  
-- `GET /fast` - Processamento rápido
-- `GET /medium` - Processamento médio (0.5s)
-- `GET /slow` - Processamento lento (2s)
-- `POST /data` - Recebimento de dados
+- `GET /status` - Estado do servidor  
+- `GET /rapido` - Processamento rápido
+- `GET /medio` - Processamento médio (0.5s)
+- `GET /lento` - Processamento lento (2s)
+- `POST /dados` - Recebimento de dados
 
 ### 🔧 Tecnologias Utilizadas
 
 **✓ Python 3.9** - Linguagem principal
-**✓ Sockets TCP** - Comunicação de rede de baixo nível
-**✓ Threading** - Concorrência no servidor
-**✓ Docker & Docker Compose** - Containerização e orquestração
+**✓ Soquetes TCP** - Comunicação de rede de baixo nível
+**✓ Multithreading** - Concorrência no servidor
+**✓ Docker e Docker Compose** - Containerização e orquestração
 **✓ Matplotlib/Seaborn** - Visualização de dados
 **✓ JSON** - Formato de resposta estruturado
 
@@ -86,50 +86,67 @@
 ./validate.sh
 
 # Iniciar ambiente
-./run_project.sh start
+./run_project.sh iniciar
 
 # Testar conectividade
-./run_project.sh test
+./run_project.sh testar
 
 # Executar testes completos (10-15 min)
-./run_project.sh full-test
+./run_project.sh teste-completo
 
 # Gerar análises e gráficos
-./run_project.sh analyze
+./run_project.sh analisar
 
 # Executar tudo automaticamente
-./run_project.sh all
+./run_project.sh tudo
+```
 
+### 📊 Arquivos de Saída Gerados
+
+**Dados dos Testes:**
+- `resultados/resultados_teste.json` - Dados brutos dos testes
+- `resultados/relatorio_desempenho.txt` - Relatório detalhado
+
+**Gráficos de Análise:**
+- `resultados/graficos/comparacao_tempo_resposta.png`
+- `resultados/graficos/comparacao_taxa_sucesso.png`
+- `resultados/graficos/analise_escalabilidade.png`
+- `resultados/graficos/comparacao_cenarios.png`
+- `resultados/graficos/analise_estatistica.png`
+### 💻 Comandos Alternativos (Makefile)
+
+```bash
 # Usando Makefile (alternativo)
-make start
-make test
-make all
+make iniciar      # Iniciar contêineres
+make testar       # Testar conectividade  
+make tudo         # Executar tudo
+make parar        # Parar contêineres
 ```
 
 ### 📁 Estrutura de Arquivos
 
 ```
 Redes-II/
-├── src/                     # Código fonte
-│   ├── config.py           # Configurações baseadas na matrícula
-│   ├── sequential_server.py # Servidor sequencial
-│   ├── concurrent_server.py # Servidor concorrente
-│   └── client.py           # Cliente HTTP para testes
-├── docker/                 # Ambiente containerizado
-│   ├── Dockerfile          # Imagem Python
-│   └── docker-compose.yml  # Orquestração
-├── tests/                  # Sistema de testes
-│   ├── automated_tests.py  # Testes automatizados
-│   ├── analyze_results.py  # Geração de gráficos
-│   └── example_usage.py    # Exemplos de uso
-├── results/                # Resultados dos testes
-│   ├── test_results.json   # Dados brutos
-│   ├── performance_report.txt # Relatório
-│   └── plots/              # Gráficos gerados
-├── run_project.sh          # Script principal
-├── validate.sh             # Validação do projeto
-├── Makefile               # Comandos simplificados
-└── requirements.txt       # Dependências Python
+├── src/                        # Código fonte
+│   ├── configuracao.py        # Configurações baseadas na matrícula
+│   ├── servidor_sequencial.py # Servidor sequencial
+│   ├── servidor_concorrente.py# Servidor concorrente
+│   └── cliente.py             # Cliente HTTP para testes
+├── docker/                    # Ambiente containerizado
+│   ├── Dockerfile             # Imagem Python
+│   └── docker-compose.yml     # Orquestração
+├── testes/                    # Sistema de testes
+│   ├── testes_automatizados.py# Testes automatizados
+│   ├── analisar_resultados.py # Geração de gráficos
+│   └── exemplos_uso.py        # Exemplos de uso
+├── resultados/                # Resultados dos testes
+│   ├── resultados_teste.json  # Dados brutos
+│   ├── relatorio_desempenho.txt# Relatório
+│   └── graficos/              # Gráficos gerados
+├── run_project.sh             # Script principal
+├── validate.sh                # Validação do projeto
+├── Makefile                   # Comandos simplificados
+└── requisitos.txt             # Dependências Python
 ```
 
 ### 🎯 Diferenciais Implementados
@@ -160,18 +177,32 @@ Redes-II/
 ✅ **CONCLUÍDO**: Sistema de testes automatizados  
 ✅ **CONCLUÍDO**: Ambiente Docker funcional
 ✅ **CONCLUÍDO**: Validação e conectividade
-🔄 **EM EXECUÇÃO**: Testes completos de performance
-⏳ **PRÓXIMO**: Geração de gráficos e relatório final
+✅ **CONCLUÍDO**: Testes funcionais validados
+✅ **CONCLUÍDO**: Documentação atualizada
 
 ### 🏆 Objetivos Alcançados
 
-1. ✅ Servidor web sequencial funcional
-2. ✅ Servidor web concorrente funcional  
-3. ✅ Ambiente de teste Docker configurado
-4. ✅ Mensagens HTTP estruturadas
-5. ✅ Métricas de desempenho definidas
-6. ✅ Testes elaborados e funcionais
-7. ✅ Sistema de análise estatística
-8. ✅ Comparação entre abordagens
+01. ✅ Servidor web sequencial funcional
+02. ✅ Servidor web concorrente funcional  
+03. ✅ Ambiente de teste Docker configurado
+04. ✅ Mensagens HTTP estruturadas
+05. ✅ Métricas de desempenho definidas
+06. ✅ Testes elaborados e funcionais
+07. ✅ Sistema de análise estatística
+08. ✅ Comparação entre abordagens
+09. ✅ Projeto 100% em português
+10. ✅ Compatibilidade com comandos originais
+
+### 🎓 Projeto Acadêmico Completo
+
+**Aluno**: Raildom da Rocha Sobrinho  
+**Matrícula**: 20239057601  
+**Disciplina**: Redes de Computadores II  
+**Data**: Outubro 2025  
+**Status**: ✅ **PROJETO FINALIZADO COM SUCESSO**
+
+---
+
+*Este projeto demonstra a implementação prática de servidores web com diferentes abordagens de concorrência, utilizando tecnologias modernas de containerização e análise de performance em ambiente acadêmico.*
 
 **🎉 PROJETO 100% FUNCIONAL E PRONTO PARA AVALIAÇÃO**

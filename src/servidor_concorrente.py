@@ -1,7 +1,6 @@
-"""
-Servidor Web Concorrente (Assíncrono)
-Implementa um servidor que atende múltiplas requisições simultaneamente usando threads
-"""
+#Servidor Web Concorrente (Assíncrono)
+#Implementa um servidor que atende múltiplas requisições simultaneamente usando threads
+
 import socket
 import json
 import time
@@ -19,7 +18,7 @@ class ServidorWebConcorrente:
         self.conexoes_ativas = 0
         
     def iniciar(self):
-        """Inicia o servidor concorrente"""
+        #Inicia o servidor concorrente"
         self.socket_servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket_servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
@@ -32,7 +31,7 @@ class ServidorWebConcorrente:
             while True:
                 socket_cliente, endereco_cliente = self.socket_servidor.accept()
                 
-                # Cria uma thread para cada cliente
+                #Cria uma thread para cada cliente
                 thread_cliente = threading.Thread(
                     target=self.gerenciar_cliente,
                     args=(socket_cliente, endereco_cliente)
@@ -48,7 +47,7 @@ class ServidorWebConcorrente:
             self.parar()
     
     def gerenciar_cliente(self, socket_cliente, endereco_cliente):
-        """Gerencia a conexão com um cliente em uma thread separada"""
+        #Gerencia a conexão com um cliente em uma thread separada
         with self.lock:
             self.conexoes_ativas += 1
             id_conexao = self.conexoes_ativas
@@ -63,38 +62,38 @@ class ServidorWebConcorrente:
             print(f"Conexão {id_conexao} finalizada")
     
     def processar_requisicao(self, socket_cliente, endereco_cliente, id_conexao):
-        """Processa uma requisição HTTP"""
+        #Processa uma requisição HTTP
         try:
             tempo_inicio = time.time()
             
-            # Recebe a requisição
+            #Recebe a requisição
             dados_requisicao = socket_cliente.recv(4096).decode('utf-8')
             if not dados_requisicao:
                 return
             
-            # Parse da requisição HTTP
+            #Parse da requisição HTTP
             linhas_requisicao = dados_requisicao.split('\n')
             linha_requisicao = linhas_requisicao[0].strip()
             metodo, caminho, versao = linha_requisicao.split(' ')
             
-            # Extrai headers
+            #Extrai headers
             cabecalhos = {}
             for linha in linhas_requisicao[1:]:
                 if ':' in linha:
                     chave, valor = linha.split(':', 1)
                     cabecalhos[chave.strip()] = valor.strip()
             
-            # Verifica o cabeçalho customizado
+            #Verifica o cabeçalho customizado
             id_customizado = cabecalhos.get('X-Custom-ID', '')
             
             with self.lock:
                 self.contador_requisicoes += 1
                 requisicao_atual = self.contador_requisicoes
             
-            # Gera resposta baseada no método e path
+            #Gera resposta baseada no método e path
             resposta = self.gerar_resposta(metodo, caminho, id_customizado, tempo_inicio, requisicao_atual, id_conexao)
             
-            # Envia resposta
+            #Envia resposta
             socket_cliente.send(resposta.encode('utf-8'))
             
             tempo_processamento = time.time() - tempo_inicio
@@ -108,14 +107,14 @@ class ServidorWebConcorrente:
             socket_cliente.close()
     
     def gerar_resposta(self, metodo, caminho, id_customizado, tempo_inicio, num_requisicao, id_conexao):
-        """Gera resposta HTTP baseada no método e path"""
+        #Gera resposta HTTP baseada no método e path
         
-        # Simula diferentes tipos de processamento
+        #Simula diferentes tipos de processamento
         if caminho == '/lento':
-            time.sleep(2)  # Simula processamento lento
+            time.sleep(2)  #Simula processamento lento
         elif caminho == '/medio':
-            time.sleep(0.5)  # Processamento médio
-        # Path '/' ou '/rapido' - processamento rápido (sem delay)
+            time.sleep(0.5)  #Processamento médio
+        #Path '/' ou '/rapido' - processamento rápido (sem delay)
         
         with self.lock:
             ativas_atuais = self.conexoes_ativas
@@ -176,7 +175,7 @@ Connection: close\r
         return resposta
     
     def gerar_resposta_erro(self, codigo_status, texto_status, id_conexao):
-        """Gera resposta de erro HTTP"""
+        #Gera resposta de erro HTTP
         dados_erro = {
             "erro": codigo_status,
             "mensagem": texto_status,
@@ -200,7 +199,7 @@ Connection: close\r
         return resposta
     
     def parar(self):
-        """Para o servidor"""
+        #Para o servidor
         if self.socket_servidor:
             self.socket_servidor.close()
             print("Servidor concorrente parado")

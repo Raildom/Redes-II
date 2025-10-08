@@ -13,17 +13,17 @@ class ClienteHTTP:
         self.porta_servidor = porta_servidor
         
     def enviar_requisicao(self, metodo='GET', caminho='/', cabecalhos=None, corpo=None):
-        """Envia uma requisição HTTP para o servidor"""
+        #Envia uma requisição HTTP para o servidor
         if cabecalhos is None:
             cabecalhos = {}
         
-        # Adiciona o cabeçalho customizado obrigatório
+        #Adiciona o cabeçalho customizado obrigatório
         cabecalhos['X-Custom-ID'] = ID_CUSTOMIZADO
         cabecalhos['Host'] = f"{self.host_servidor}:{self.porta_servidor}"
         cabecalhos['Connection'] = 'close'
         
         try:
-            # Cria conexão
+            #Cria conexão
             socket_cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             socket_cliente.settimeout(10)  # Timeout de 10 segundos
             
@@ -31,7 +31,7 @@ class ClienteHTTP:
             socket_cliente.connect((self.host_servidor, self.porta_servidor))
             tempo_conexao = time.time() - tempo_inicio
             
-            # Monta a requisição HTTP
+            #Monta a requisição HTTP
             linha_requisicao = f"{metodo} {caminho} HTTP/1.1\r\n"
             linhas_cabecalho = "\r\n".join([f"{chave}: {valor}" for chave, valor in cabecalhos.items()])
             
@@ -41,12 +41,12 @@ class ClienteHTTP:
             else:
                 requisicao = f"{linha_requisicao}{linhas_cabecalho}\r\n\r\n"
             
-            # Envia requisição
+            #Envia requisição
             inicio_envio = time.time()
             socket_cliente.send(requisicao.encode('utf-8'))
             tempo_envio = time.time() - inicio_envio
             
-            # Recebe resposta
+            #Recebe resposta
             inicio_recepcao = time.time()
             dados_resposta = b""
             while True:
@@ -55,12 +55,12 @@ class ClienteHTTP:
                     break
                 dados_resposta += pedaco
                 
-                # Verifica se recebeu a resposta completa
+                #Verifica se recebeu a resposta completa
                 if b"\r\n\r\n" in dados_resposta:
                     fim_cabecalho = dados_resposta.find(b"\r\n\r\n")
                     parte_cabecalhos = dados_resposta[:fim_cabecalho].decode('utf-8')
                     
-                    # Verifica se tem Content-Length
+                    #Verifica se tem Content-Length
                     tamanho_conteudo = 0
                     for linha in parte_cabecalhos.split('\r\n'):
                         if linha.lower().startswith('content-length:'):
@@ -80,7 +80,7 @@ class ClienteHTTP:
             
             socket_cliente.close()
             
-            # Parse da resposta
+            #Parse da resposta
             texto_resposta = dados_resposta.decode('utf-8')
             
             if "\r\n\r\n" in texto_resposta:
@@ -131,7 +131,7 @@ class TestadorCarga:
         return resultado
     
     def teste_concorrente(self, num_clientes, requisicoes_por_cliente, metodo='GET', caminho='/'):
-        """Executa teste com múltiplos clientes simultâneos"""
+        #Executa teste com múltiplos clientes simultâneos
         threads = []
         self.resultados = []
         
@@ -147,7 +147,7 @@ class TestadorCarga:
             threads.append(thread)
             thread.start()
         
-        # Aguarda todas as threads terminarem
+        #Aguarda todas as threads terminarem
         for thread in threads:
             thread.join()
         
@@ -160,14 +160,14 @@ class TestadorCarga:
         }
     
     def _trabalhador_cliente(self, id_cliente, num_requisicoes, metodo, caminho):
-        """Worker para executar requisições de um cliente"""
+        #Worker para executar requisições de um cliente
         for id_req in range(num_requisicoes):
             resultado = self.teste_requisicao_unica(metodo, caminho, f"{id_cliente}-{id_req}")
             if id_req % 10 == 0:  # Log a cada 10 requisições
                 print(f"Cliente {id_cliente}: {id_req + 1}/{num_requisicoes} requisições completadas")
     
     def _calcular_resumo(self):
-        """Calcula estatísticas dos resultados"""
+        #Calcula estatísticas dos resultados
         if not self.resultados:
             return {}
         
@@ -198,7 +198,7 @@ class TestadorCarga:
         return resumo
 
 if __name__ == "__main__":
-    # Teste simples
+    #Teste simples
     import sys
     
     if len(sys.argv) != 2:
@@ -211,12 +211,12 @@ if __name__ == "__main__":
     
     cliente = ClienteHTTP(ip_servidor)
     
-    # Teste básico
+    #Teste básico
     print("Executando teste básico...")
     resultado = cliente.enviar_requisicao('GET', '/')
     print(f"Resultado: {resultado}")
     
-    # Teste de carga simples
+    #Teste de carga simples
     print("\nExecutando teste de carga...")
     testador = TestadorCarga(ip_servidor)
     resultado_carga = testador.teste_concorrente(5, 2, 'GET', '/rapido')

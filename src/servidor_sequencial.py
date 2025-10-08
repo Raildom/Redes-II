@@ -1,7 +1,6 @@
-"""
-Servidor Web Sequencial (Síncrono)
-Implementa um servidor que atende uma requisição por vez
-"""
+#Servidor Web Sequencial (Síncrono)
+#Implementa um servidor que atende uma requisição por vez
+
 import socket
 import json
 import time
@@ -17,13 +16,13 @@ class ServidorWebSequencial:
         self.contador_requisicoes = 0
         
     def iniciar(self):
-        """Inicia o servidor sequencial"""
+        #Inicia o servidor sequencial
         self.socket_servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket_servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
         try:
             self.socket_servidor.bind((self.host, self.porta))
-            self.socket_servidor.listen(1)  # Fila de apenas 1 conexão
+            self.socket_servidor.listen(1)  #Fila de apenas 1 conexão
             print(f"Servidor Sequencial iniciado em {self.host}:{self.porta}")
             
             while True:
@@ -39,34 +38,34 @@ class ServidorWebSequencial:
             self.parar()
 
     def processar_requisicao(self, socket_cliente, endereco_cliente):
-        """Processa uma requisição HTTP"""
+        #Processa uma requisição HTTP
         try:
             tempo_inicio = time.time()
-            # Recebe a requisição
+            #Recebe a requisição
             dados_requisicao = socket_cliente.recv(4096).decode('utf-8')
             if not dados_requisicao:
                 return
-            # Parse da requisição HTTP
+            #Parse da requisição HTTP
             linhas_requisicao = dados_requisicao.split('\n')
             linha_requisicao = linhas_requisicao[0].strip()
             metodo, caminho, versao = linha_requisicao.split(' ')
             
-            # Extrai headers
+            #Extrai headers
             cabecalhos = {}
             for linha in linhas_requisicao[1:]:
                 if ':' in linha:
                     chave, valor = linha.split(':', 1)
                     cabecalhos[chave.strip()] = valor.strip()
             
-            # Verifica o cabeçalho customizado
+            #Verifica o cabeçalho customizado
             id_customizado = cabecalhos.get('X-Custom-ID', '')
             
             self.contador_requisicoes += 1
             
-            # Gera resposta baseada no método e path
+            #Gera resposta baseada no método e path
             resposta = self.gerar_resposta(metodo, caminho, id_customizado, tempo_inicio)
             
-            # Envia resposta
+            #Envia resposta
             socket_cliente.send(resposta.encode('utf-8'))
             
             tempo_processamento = time.time() - tempo_inicio
@@ -80,14 +79,14 @@ class ServidorWebSequencial:
             socket_cliente.close()
     
     def gerar_resposta(self, metodo, caminho, id_customizado, tempo_inicio):
-        """Gera resposta HTTP baseada no método e path"""
-        
-        # Simula diferentes tipos de processamento
+        #Gera resposta HTTP baseada no método e path
+
+        #Simula diferentes tipos de processamento
         if caminho == '/lento':
-            time.sleep(2)  # Simula processamento lento
+            time.sleep(2)  #Simula processamento lento
         elif caminho == '/medio':
-            time.sleep(0.5)  # Processamento médio
-        # Path '/' ou '/rapido' - processamento rápido (sem delay)
+            time.sleep(0.5)  #Processamento médio
+        #Path '/' ou '/rapido' - processamento rápido (sem delay)
         
         dados_resposta = {
             "tipo_servidor": "sequencial",
@@ -139,7 +138,7 @@ Connection: close\r
         return resposta
     
     def gerar_resposta_erro(self, codigo_status, texto_status):
-        """Gera resposta de erro HTTP"""
+        #Gera resposta de erro HTTP
         dados_erro = {
             "erro": codigo_status,
             "mensagem": texto_status,
@@ -160,7 +159,7 @@ Connection: close\r
         return resposta
     
     def parar(self):
-        """Para o servidor"""
+        #Para o servidor
         if self.socket_servidor:
             self.socket_servidor.close()
             print("Servidor sequencial parado")
