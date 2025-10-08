@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""
-Teste Completo do Projeto Redes II
-Arquivo independente para testar servidores sequencial e concorrente
-"""
+
+#Teste Completo do Projeto Redes II
+#Arquivo independente para testar servidores sequencial e concorrente
 
 import sys
 import os
@@ -12,7 +11,7 @@ import argparse
 import threading
 from datetime import datetime
 
-# Adicionar diretório src ao path (um nível acima da pasta testes)
+#Adicionar diretório src ao path (um nível acima da pasta testes)
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 try:
@@ -24,14 +23,14 @@ except ImportError as e:
     sys.exit(1)
 
 class TestadorCarga:
-    """Classe para executar testes de carga e concorrencia"""
+    #Classe para executar testes de carga e concorrencia
     def __init__(self, host_servidor, porta_servidor=PORTA_SERVIDOR):
         self.cliente = ClienteHTTP(host_servidor, porta_servidor)
         self.resultados = []
         self.lock = threading.Lock()
         
     def teste_requisicao_unica(self, metodo='GET', caminho='/', id_cliente=None):
-        """Executa um unico teste de requisicao"""
+        #Executa um unico teste de requisicao
         resultado = self.cliente.enviar_requisicao(metodo, caminho)
         resultado['id_cliente'] = id_cliente
         resultado['timestamp'] = time.time()
@@ -42,7 +41,7 @@ class TestadorCarga:
         return resultado
     
     def teste_concorrente(self, num_clientes, requisicoes_por_cliente, metodo='GET', caminho='/'):
-        # Executa teste com multiplos clientes simultaneos
+        #Executa teste com multiplos clientes simultaneos
         threads = []
         self.resultados = []
         
@@ -58,7 +57,7 @@ class TestadorCarga:
             threads.append(thread)
             thread.start()
         
-        # Aguarda todas as threads terminarem
+        #Aguarda todas as threads terminarem
         for thread in threads:
             thread.join()
         
@@ -71,14 +70,14 @@ class TestadorCarga:
         }
     
     def _trabalhador_cliente(self, id_cliente, num_requisicoes, metodo, caminho):
-        # Worker para executar requisicoes de um cliente
+        #Worker para executar requisicoes de um cliente
         for id_req in range(num_requisicoes):
             resultado = self.teste_requisicao_unica(metodo, caminho, f"{id_cliente}-{id_req}")
-            if id_req % 10 == 0:  # Log a cada 10 requisicoes
+            if id_req % 10 == 0:  #Log a cada 10 requisicoes
                 print(f"Cliente {id_cliente}: {id_req + 1}/{num_requisicoes} requisicoes completadas")
     
     def _calcular_resumo(self):
-        # Calcula estatisticas dos resultados
+        #Calcula estatisticas dos resultados
         if not self.resultados:
             return {}
         
@@ -109,24 +108,24 @@ class TestadorCarga:
         return resumo
 
 class TestadorProjeto:
-    """Classe para executar todos os testes do projeto"""
+    #Classe para executar todos os testes do projeto
     
     def __init__(self):
-        # Configuração baseada no ambiente
+        #Configuração baseada no ambiente
         self.servidores = {
             'sequencial': {
-                'ip': '76.1.0.10',  # IP no Docker
-                'porta': 8080,
+                'ip': '76.1.0.10',  #IP no Docker
+                'porta': 80,  #Porta interna do contêiner
                 'nome': 'Servidor Sequencial'
             },
             'concorrente': {
-                'ip': '76.1.0.11',  # IP no Docker
-                'porta': 8080,
+                'ip': '76.1.0.11',  #IP no Docker
+                'porta': 80,  #Porta interna do contêiner
                 'nome': 'Servidor Concorrente'
             }
         }
         
-        # Para execução local (fora do Docker)
+        #Para execução externa ao Docker (do host para contêineres)
         self.servidores_local = {
             'sequencial': {
                 'ip': 'localhost',
@@ -151,23 +150,23 @@ class TestadorProjeto:
         self.resultados = []
     
     def detectar_ambiente(self):
-        """Detecta se está rodando dentro do Docker ou localmente"""
+        #Detecta se está rodando dentro do Docker ou localmente
         try:
-            # Tenta conectar no IP do Docker primeiro
-            cliente_teste = ClienteHTTP('76.1.0.10', 8080)
+            #Tenta conectar no IP do Docker primeiro (comunicação interna)
+            cliente_teste = ClienteHTTP('76.1.0.10', 80)
             resultado = cliente_teste.enviar_requisicao('GET', '/')
             if resultado['codigo_status'] == 200:
-                print("🐳 Ambiente Docker detectado")
+                print("🐳 Ambiente Docker detectado (comunicação interna)")
                 return 'docker'
         except:
             pass
         
         try:
-            # Tenta conectar localmente
+            #Tenta conectar via portas mapeadas (do host para Docker)
             cliente_teste = ClienteHTTP('localhost', 8080)
             resultado = cliente_teste.enviar_requisicao('GET', '/')
             if resultado['codigo_status'] == 200:
-                print("💻 Ambiente local detectado")
+                print("💻 Ambiente local detectado (host->Docker)")
                 return 'local'
         except:
             pass
@@ -176,7 +175,7 @@ class TestadorProjeto:
         return None
     
     def teste_conectividade_basica(self, ambiente='docker'):
-        """Testa conectividade básica com ambos servidores"""
+        #Testa conectividade básica com ambos servidores
         print("\n" + "="*60)
         print("🔌 TESTE DE CONECTIVIDADE BÁSICA")
         print("="*60)
@@ -193,7 +192,7 @@ class TestadorProjeto:
                 if resultado['codigo_status'] == 200:
                     print(f"   ✅ Conectividade OK - Tempo: {resultado['tempo_resposta']:.3f}s")
                     
-                    # Parse da resposta JSON
+                    #Parse da resposta JSON
                     try:
                         dados = json.loads(resultado['corpo'])
                         print(f"   📄 Tipo servidor: {dados.get('tipo_servidor', 'N/A')}")
@@ -209,7 +208,7 @@ class TestadorProjeto:
                 print(f"   ❌ Falha na conexão: {str(e)}")
     
     def teste_endpoints(self, ambiente='docker'):
-        """Testa todos os endpoints de ambos servidores"""
+        #Testa todos os endpoints de ambos servidores
         print("\n" + "="*60)
         print("🎯 TESTE DE ENDPOINTS")
         print("="*60)
@@ -234,7 +233,7 @@ class TestadorProjeto:
                         emoji = "✅" if tempo <= endpoint['tempo_esperado'] else "⚠️"
                         print(f"     {emoji} Status: {status} | Tempo: {tempo:.3f}s")
                         
-                        # Salvar resultado para análise
+                        #Salvar resultado para análise
                         self.resultados.append({
                             'servidor': tipo,
                             'endpoint': endpoint['path'],
@@ -264,7 +263,7 @@ class TestadorProjeto:
                     })
     
     def teste_validacao_cabecalho(self, ambiente='docker'):
-        """Testa validação do cabeçalho X-Custom-ID"""
+        #Testa validação do cabeçalho X-Custom-ID
         print("\n" + "="*60)
         print("🔒 TESTE DE VALIDAÇÃO DO CABEÇALHO")
         print("="*60)
@@ -286,7 +285,7 @@ class TestadorProjeto:
                 
                 try:
                     cliente = ClienteHTTP(config['ip'], config['porta'])
-                    # Sobrescrever o cabeçalho customizado
+                    #Sobrescrever o cabeçalho customizado
                     resultado = cliente.enviar_requisicao('GET', '/', {'X-Custom-ID': caso['id']})
                     
                     if resultado['codigo_status'] == 200:
@@ -304,7 +303,7 @@ class TestadorProjeto:
                     print(f"     ❌ Erro: {str(e)}")
     
     def teste_concorrencia(self, ambiente='docker'):
-        """Testa capacidade de concorrência dos servidores"""
+        #Testa capacidade de concorrência dos servidores
         print("\n" + "="*60)
         print("⚡ TESTE DE CONCORRÊNCIA")
         print("="*60)
@@ -341,7 +340,7 @@ class TestadorProjeto:
                     print(f"     ❌ Erro: {str(e)}")
     
     def relatorio_comparativo(self):
-        """Gera relatório comparativo dos resultados"""
+        #Gera relatório comparativo dos resultados
         print("\n" + "="*60)
         print("📊 RELATÓRIO COMPARATIVO")
         print("="*60)
@@ -350,7 +349,7 @@ class TestadorProjeto:
             print("❌ Nenhum resultado disponível para análise")
             return
         
-        # Agrupar por endpoint
+        #Agrupar por endpoint
         por_endpoint = {}
         for resultado in self.resultados:
             endpoint = resultado['endpoint']
@@ -376,20 +375,20 @@ class TestadorProjeto:
                     print(f"  {servidor:12}: Sem dados")
     
     def executar_tudo(self, ambiente=None):
-        """Executa todos os testes"""
+        #Executa todos os testes
         print("🚀 TESTADOR COMPLETO DO PROJETO REDES II")
         print("Matrícula: 20239057601")
         print("Aluno: Raildom")
         print(f"Data/Hora: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
-        # Detectar ambiente se não especificado
+        #Detectar ambiente se não especificado
         if ambiente is None:
             ambiente = self.detectar_ambiente()
             if ambiente is None:
                 print("❌ Nenhum servidor disponível. Certifique-se de que os servidores estejam rodando.")
                 return False
-        
-        # Executar testes
+
+        #Executar testes
         self.teste_conectividade_basica(ambiente)
         self.teste_endpoints(ambiente)
         self.teste_validacao_cabecalho(ambiente)
@@ -403,7 +402,7 @@ class TestadorProjeto:
         return True
 
 def main():
-    """Função principal"""
+    #Função principal
     parser = argparse.ArgumentParser(description='Testador Completo do Projeto Redes II')
     parser.add_argument('--ambiente', choices=['docker', 'local'], 
                        help='Especificar ambiente (docker ou local)')
@@ -420,11 +419,11 @@ def main():
     
     testador = TestadorProjeto()
     
-    # Se nenhum teste específico foi especificado, executar tudo
+    #Se nenhum teste específico foi especificado, executar tudo
     if not any([args.conectividade, args.endpoints, args.cabecalho, args.concorrencia]):
         testador.executar_tudo(args.ambiente)
     else:
-        # Detectar ambiente se não especificado
+        #Detectar ambiente se não especificado
         ambiente = args.ambiente
         if ambiente is None:
             ambiente = testador.detectar_ambiente()
@@ -432,7 +431,7 @@ def main():
                 print("❌ Nenhum servidor disponível")
                 return
         
-        # Executar testes específicos
+        #Executar testes específicos
         if args.conectividade:
             testador.teste_conectividade_basica(ambiente)
         
