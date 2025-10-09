@@ -1,19 +1,19 @@
 #!/bin/bash
 # Script principal para executar o projeto Redes II
 
-set -e  # Para em caso de erro
-
 echo "=== Projeto Redes II - Servidor Web Sequencial vs Concorrente ==="
 echo "Matrícula: 20239057601"
 echo "Subnet configurada: 76.1.0.0/16"
 echo ""
 
 # Função para verificar se o Docker está rodando
-check_docker() {
+verificar_docker() {
     if ! docker info >/dev/null 2>&1; then
-        echo "Erro: Docker não está rodando ou não está instalado"
-        exit 1
+        echo "[ERRO] Docker não está rodando ou não está instalado"
+        echo "Por favor, inicie o Docker e tente novamente"
+        return 1
     fi
+    return 0
 }
 
 # Função para construir e iniciar os contêineres
@@ -29,7 +29,7 @@ iniciar_conteineres() {
     docker-compose up --build -d
     
     echo "Aguardando contêineres iniciarem..."
-    sleep 10
+    sleep 5
     
     # Verifica se os contêineres estão rodando
     if docker-compose ps | grep -q "Up"; then
@@ -49,7 +49,21 @@ testar_conectividade() {
     echo ""
     echo "=== Testando conectividade dos servidores ==="
     
-    docker exec cliente_teste python3 testes/testes_automatizados.py
+    # Verifica se o contêiner está rodando
+    if ! docker ps | grep -q "cliente_teste"; then
+        echo "[ERRO] Contêiner de teste não está rodando."
+        echo "Execute primeiro a opção 1 (Iniciar contêineres)"
+        return 1
+    fi
+    
+    # Executa os testes com tratamento de erro
+    if docker exec cliente_teste python3 testes/teste_completo.py --conectividade; then
+        echo "[SUCESSO] Testes de conectividade concluídos"
+    else
+        echo "[ERRO] Falha nos testes de conectividade"
+        echo "Verifique se os servidores estão funcionando corretamente"
+        return 1
+    fi
 }
 
 # Função para executar testes completos
@@ -58,7 +72,21 @@ executar_testes_completos() {
     echo "=== Executando testes completos ==="
     echo "Isso pode demorar alguns minutos..."
     
-    docker exec cliente_teste python3 testes/testes_automatizados.py --full
+    # Verifica se o contêiner está rodando
+    if ! docker ps | grep -q "cliente_teste"; then
+        echo "[ERRO] Contêiner de teste não está rodando."
+        echo "Execute primeiro a opção 1 (Iniciar contêineres)"
+        return 1
+    fi
+    
+    # Executa os testes completos com tratamento de erro
+    if docker exec cliente_teste python3 testes/teste_completo.py --completo; then
+        echo "[SUCESSO] Testes completos concluídos"
+    else
+        echo "[ERRO] Falha nos testes completos"
+        echo "Verifique os logs para mais detalhes"
+        return 1
+    fi
 }
 
 # Função para gerar análises e gráficos
@@ -88,7 +116,7 @@ parar_conteineres() {
 }
 
 # Função para limpar tudo
-cleanup() {
+limpar_ambiente() {
     echo ""
     echo "=== Limpando ambiente ==="
     
@@ -101,7 +129,7 @@ cleanup() {
 }
 
 # Função para mostrar logs
-show_logs() {
+mostrar_logs() {
     echo ""
     echo "=== Logs dos contêineres ==="
     
@@ -118,9 +146,10 @@ show_logs() {
 }
 
 # Função para entrar no contêiner de teste
-enter_test_container() {
+entrar_conteiner_teste() {
     echo ""
     echo "=== Entrando no contêiner de teste ==="
+    echo "Bem vindo ao contêiner do cliente!"
     echo "Para sair, digite 'exit'"
     
     # Verifica se o contêiner está rodando
@@ -136,7 +165,7 @@ enter_test_container() {
 # Menu principal
 mostrar_menu() {
     echo ""
-    echo "=== MENU PRINCIPAL ==="
+    echo "==== MENU PRINCIPAL ===="
     echo "1) Iniciar contêineres"
     echo "2) Testar conectividade"
     echo "3) Executar testes completos"
@@ -151,7 +180,15 @@ mostrar_menu() {
 }
 
 # Verifica Docker
-check_docker
+if ! verificar_docker; then
+    echo "Não é possível continuar sem Docker funcionando"
+    if [ $# -gt 0 ]; then
+        exit 1
+    else
+        echo "Pressione Enter para tentar novamente ou Ctrl+C para sair"
+        read
+    fi
+fi
 
 # Se há argumentos, executa diretamente
 if [ $# -gt 0 ]; then
@@ -172,13 +209,13 @@ if [ $# -gt 0 ]; then
             parar_conteineres
             ;;
         "clean"|"limpar")
-            cleanup
+            limpar_ambiente
             ;;
         "logs")
-            show_logs
+            mostrar_logs
             ;;
         "shell")
-            enter_test_container
+            entrar_conteiner_teste
             ;;
         "all"|"tudo")
             iniciar_conteineres
@@ -222,16 +259,16 @@ while true; do
             gerar_analises
             ;;
         5)
-            show_logs
+            mostrar_logs
             ;;
         6)
-            enter_test_container
+            entrar_conteiner_teste
             ;;
         7)
             parar_conteineres
             ;;
         8)
-            cleanup
+            limpar_ambiente
             ;;
         9)
             iniciar_conteineres
@@ -248,6 +285,7 @@ while true; do
             fi
             ;;
         0)
+            parar_conteineres
             echo "Saindo..."
             break
             ;;

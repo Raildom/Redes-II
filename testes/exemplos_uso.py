@@ -10,7 +10,7 @@ import time
 sys.path.append('/app/src')
 
 from cliente import ClienteHTTP
-from teste_cliente import TestadorCarga
+from teste_completo import TestadorCarga
 from configuracao import ID_CUSTOMIZADO
 
 def exemplo_básico():
@@ -178,7 +178,7 @@ if __name__ == "__main__":
         
         print("\n=== Exemplos Concluídos ===")
         print("Para testes mais completos, execute:")
-        print("  python3 testes/testes_automatizados.py --completo")
+        print("  python3 testes/teste_completo.py --completo")
         
     except KeyboardInterrupt:
         print("\n\nExecução interrompida pelo usuário")

@@ -115,5 +115,5 @@ class ClienteHTTP:
 
 if __name__ == "__main__":
     print("Este e o modulo cliente.py")
-    print("Para executar testes, use: python3 testes/teste_cliente.py")
-    print("Para testes automatizados, use: python3 testes/testes_automatizados.py")
+    print("Para executar testes, use: python3 testes/teste_completo.py")
+    print("Para testes automatizados, use: python3 testes/teste_completo.py --completo")
