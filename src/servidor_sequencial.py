@@ -113,16 +113,16 @@ class ServidorWebSequencial:
             elif caminho in ['/rapido', '/medio', '/lento']:
                 dados_resposta["conteudo"] = f"Endpoint {caminho} processado"
             else:
-                return self.gerar_resposta_erro(404, "Não Encontrado")
+                return self.gerar_resposta_erro(404, "Não Encontrado", id_customizado)
                 
         elif metodo == 'POST':
             if caminho == '/dados':
                 dados_resposta["conteudo"] = "Dados recebidos via POST"
             else:
-                return self.gerar_resposta_erro(404, "Não Encontrado")
+                return self.gerar_resposta_erro(404, "Não Encontrado", id_customizado)
                 
         else:
-            return self.gerar_resposta_erro(405, "Método Não Permitido")
+            return self.gerar_resposta_erro(405, "Método Não Permitido", id_customizado)
         
         resposta_json = json.dumps(dados_resposta, indent=2)
         
@@ -131,13 +131,14 @@ Content-Type: application/json\r
 Content-Length: {len(resposta_json)}\r
 Server: ServidorSequencial/1.0\r
 X-Server-Type: sequencial\r
+X-Custom-ID: {id_customizado}\r
 Connection: close\r
 \r
 {resposta_json}"""
         
         return resposta
     
-    def gerar_resposta_erro(self, codigo_status, texto_status):
+    def gerar_resposta_erro(self, codigo_status, texto_status, id_customizado=""):
         #Gera resposta de erro HTTP
         dados_erro = {
             "erro": codigo_status,
@@ -152,6 +153,7 @@ Connection: close\r
 Content-Type: application/json\r
 Content-Length: {len(resposta_json)}\r
 Server: ServidorSequencial/1.0\r
+X-Custom-ID: {id_customizado}\r
 Connection: close\r
 \r
 {resposta_json}"""

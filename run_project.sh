@@ -66,7 +66,15 @@ gerar_analises() {
     echo ""
     echo "=== Gerando análises e gráficos ==="
     
-    docker exec cliente_teste python3 testes/analisar_resultados.py
+    # Verifica se existem resultados para analisar
+    if docker exec cliente_teste test -f /app/results/test_results.json; then
+        echo "Analisando resultados existentes..."
+        docker exec cliente_teste python3 testes/analisar_resultados.py
+    else
+        echo "[AVISO] Nenhum resultado encontrado para análise."
+        echo "Execute primeiro os testes com a opção 3 (Executar testes completos)"
+        echo "ou use a opção 9 (Executar tudo) para executar testes e análises automaticamente."
+    fi
 }
 
 # Função para parar contêineres
