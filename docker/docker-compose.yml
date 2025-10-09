@@ -5,14 +5,13 @@ services:
   servidor-sequencial:
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.sequencial
     container_name: servidor_sequencial
     networks:
       rede_redes2:
         ipv4_address: 76.1.0.10
     ports:
       - "8080:8080"
-    command: python src/servidor_sequencial.py
     volumes:
       - ../src:/app/src
       - ../resultados:/app/resultados
@@ -21,14 +20,13 @@ services:
   servidor-concorrente:
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.concorrente
     container_name: servidor_concorrente
     networks:
       rede_redes2:
         ipv4_address: 76.1.0.11
     ports:
       - "8081:8080"
-    command: python src/servidor_concorrente.py
     volumes:
       - ../src:/app/src
       - ../resultados:/app/resultados
@@ -37,12 +35,11 @@ services:
   cliente-teste:
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.cliente
     container_name: cliente_teste
     networks:
       rede_redes2:
         ipv4_address: 76.1.0.20
-    command: tail -f /dev/null  # Mantém o contêiner ativo
     volumes:
       - ../src:/app/src
       - ../testes:/app/testes
