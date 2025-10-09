@@ -103,20 +103,34 @@ cleanup() {
 # Função para mostrar logs
 show_logs() {
     echo ""
-    echo "=== Logs dos containers ==="
+    echo "=== Logs dos contêineres ==="
+    
+    # Verifica se os contêineres estão rodando
+    if ! docker-compose -f docker/docker-compose.yml ps | grep -q "Up"; then
+        echo "[AVISO] Contêineres não estão rodando."
+        echo "Execute primeiro a opção 1 (Iniciar contêineres)"
+        return 1
+    fi
     
     cd docker
     docker-compose logs
     cd ..
 }
 
-# Função para entrar no container de teste
+# Função para entrar no contêiner de teste
 enter_test_container() {
     echo ""
-    echo "=== Entrando no container de teste ==="
+    echo "=== Entrando no contêiner de teste ==="
     echo "Para sair, digite 'exit'"
     
-    docker exec -it test_client bash
+    # Verifica se o contêiner está rodando
+    if ! docker ps | grep -q "cliente_teste"; then
+        echo "[ERRO] Contêiner de teste não está rodando."
+        echo "Execute primeiro a opção 1 (Iniciar contêineres)"
+        return 1
+    fi
+    
+    docker exec -it cliente_teste bash
 }
 
 # Menu principal
