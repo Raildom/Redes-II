@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Script principal para executar o projeto Redes II
 
 set -e  # Para em caso de erro
@@ -34,10 +33,10 @@ iniciar_conteineres() {
     
     # Verifica se os contêineres estão rodando
     if docker-compose ps | grep -q "Up"; then
-        echo "✓ Contêineres iniciados com sucesso"
+        echo "[SUCESSO] Contêineres iniciados com sucesso"
         docker-compose ps
     else
-        echo "✗ Erro ao iniciar contêineres"
+        echo "[ERRO] Erro ao iniciar contêineres"
         docker-compose logs
         exit 1
     fi
@@ -90,7 +89,7 @@ cleanup() {
     docker system prune -f
     cd ..
     
-    echo "✓ Ambiente limpo"
+    echo "[SUCESSO] Ambiente limpo"
 }
 
 # Função para mostrar logs

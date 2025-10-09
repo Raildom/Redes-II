@@ -62,9 +62,9 @@ status:
 # Comando para verificar pré-requisitos
 verificar:
 	@echo "=== Verificando Pré-requisitos ==="
-	@command -v docker >/dev/null 2>&1 && echo "✓ Docker instalado" || echo "✗ Docker não encontrado"
-	@command -v docker-compose >/dev/null 2>&1 && echo "✓ Docker Compose instalado" || echo "✗ Docker Compose não encontrado"
-	@docker info >/dev/null 2>&1 && echo "✓ Docker rodando" || echo "✗ Docker não está rodando"
+	@command -v docker >/dev/null 2>&1 && echo "[SUCESSO] Docker instalado" || echo "[ERRO] Docker nao encontrado"
+	@command -v docker-compose >/dev/null 2>&1 && echo "[SUCESSO] Docker Compose instalado" || echo "[ERRO] Docker Compose nao encontrado"
+	@docker info >/dev/null 2>&1 && echo "[SUCESSO] Docker rodando" || echo "[ERRO] Docker nao esta rodando"
 
 # Comando para configuração inicial
 configurar: verificar

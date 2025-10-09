@@ -25,11 +25,11 @@ test_item() {
     total_tests=$((total_tests + 1))
     
     if eval "$test_command" >/dev/null 2>&1; then
-        echo -e "${GREEN}✓${NC} $success_message"
+        echo -e "${GREEN}[SUCESSO]${NC} $success_message"
         success_count=$((success_count + 1))
         return 0
     else
-        echo -e "${RED}✗${NC} $failure_message"
+        echo -e "${RED}[ERRO]${NC} $failure_message"
         return 1
     fi
 }
@@ -62,7 +62,9 @@ test_file "src/configuracao.py" "Configuração"
 test_file "src/servidor_sequencial.py" "Servidor sequencial"
 test_file "src/servidor_concorrente.py" "Servidor concorrente"
 test_file "src/cliente.py" "Cliente HTTP"
-test_file "docker/Dockerfile" "Dockerfile"
+test_file "docker/Dockerfile.sequencial" "Dockerfile Sequencial"
+test_file "docker/Dockerfile.concorrente" "Dockerfile Concorrente"
+test_file "docker/Dockerfile.cliente" "Dockerfile Cliente"
 test_file "docker/docker-compose.yml" "Docker Compose"
 test_file "testes/testes_automatizados.py" "Testes automatizados"
 test_file "testes/analisar_resultados.py" "Análise de resultados"
@@ -112,9 +114,9 @@ echo "=== Resumo da Validação ==="
 echo -e "Testes passaram: ${GREEN}$success_count${NC}/$total_tests"
 
 if [ $success_count -eq $total_tests ]; then
-    echo -e "${GREEN}✓ Projeto validado com sucesso!${NC}"
+    echo -e "${GREEN}[SUCESSO] Projeto validado com sucesso!${NC}"
     echo ""
-    echo "Próximos passos:"
+    echo "Proximos passos:"
     echo "1. Execute: ./run_project.sh start"
     echo "2. Execute: ./run_project.sh test"
     echo "3. Execute: ./run_project.sh full-test (opcional)"
@@ -123,7 +125,7 @@ if [ $success_count -eq $total_tests ]; then
     exit 0
 else
     failed_tests=$((total_tests - success_count))
-    echo -e "${RED}✗ $failed_tests teste(s) falharam${NC}"
+    echo -e "${RED}[ERRO] $failed_tests teste(s) falharam${NC}"
     echo ""
     echo "Corrija os problemas encontrados antes de executar o projeto."
     exit 1

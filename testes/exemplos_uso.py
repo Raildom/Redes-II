@@ -13,7 +13,7 @@ from cliente import ClienteHTTP
 from teste_cliente import TestadorCarga
 from configuracao import ID_CUSTOMIZADO
 
-def exemplo_basico():
+def exemplo_básico():
     """Exemplo básico de uso do cliente"""
     print("=== Exemplo Básico de Uso do Cliente ===")
     
@@ -31,10 +31,10 @@ def exemplo_basico():
     # Requisição simples
     resultado = cliente_seq.enviar_requisicao('GET', '/')
     if resultado['sucesso']:
-        print(f"   ✓ Status: {resultado['codigo_status']}")
-        print(f"   ✓ Tempo: {resultado['tempo_resposta']:.4f}s")
+        print(f"   [SUCESSO] Status: {resultado['codigo_status']}")
+        print(f"   [SUCESSO] Tempo: {resultado['tempo_resposta']:.4f}s")
     else:
-        print(f"   ✗ Erro: {resultado.get('erro', 'Desconhecido')}")
+        print(f"   [ERRO] Erro: {resultado.get('erro', 'Desconhecido')}")
     
     print()
     
@@ -44,10 +44,10 @@ def exemplo_basico():
     
     resultado = cliente_conc.enviar_requisicao('GET', '/')
     if resultado['sucesso']:
-        print(f"   ✓ Status: {resultado['codigo_status']}")
-        print(f"   ✓ Tempo: {resultado['tempo_resposta']:.4f}s")
+        print(f"   [SUCESSO] Status: {resultado['codigo_status']}")
+        print(f"   [SUCESSO] Tempo: {resultado['tempo_resposta']:.4f}s")
     else:
-        print(f"   ✗ Erro: {resultado.get('erro', 'Desconhecido')}")
+        print(f"   [ERRO] Erro: {resultado.get('erro', 'Desconhecido')}")
 
 def exemplo_endpoints():
     """Testa todos os endpoints disponíveis"""
@@ -70,20 +70,20 @@ def exemplo_endpoints():
         resultado = cliente.enviar_requisicao(method, path)
         
         if resultado['sucesso']:
-            print(f"   ✓ Status: {resultado['codigo_status']}")
-            print(f"   ✓ Tempo: {resultado['tempo_resposta']:.4f}s")
+            print(f"   [SUCESSO] Status: {resultado['codigo_status']}")
+            print(f"   [SUCESSO] Tempo: {resultado['tempo_resposta']:.4f}s")
             
             # Mostra parte da resposta
             if resultado['corpo']:
                 try:
                     import json
                     data = json.loads(resultado['corpo'])
-                    print(f"   ✓ Tipo de servidor: {data.get('tipo_servidor', 'N/A')}")
-                    print(f"   ✓ Mensagem: {data.get('mensagem', 'N/A')[:50]}...")
+                    print(f"   [SUCESSO] Tipo de servidor: {data.get('tipo_servidor', 'N/A')}")
+                    print(f"   [SUCESSO] Mensagem: {data.get('mensagem', 'N/A')[:50]}...")
                 except:
-                    print(f"   ✓ Resposta: {resultado['corpo'][:50]}...")
+                    print(f"   [SUCESSO] Resposta: {resultado['corpo'][:50]}...")
         else:
-            print(f"   ✗ Erro: {resultado.get('erro', 'Desconhecido')}")
+            print(f"   [ERRO] Erro: {resultado.get('erro', 'Desconhecido')}")
 
 def exemplo_teste_carga():
     """Exemplo de teste de carga simples"""
@@ -130,9 +130,9 @@ def exemplo_teste_carga():
         speedup = resultado_seq['resumo']['tempo_resposta_medio'] / resultado_conc['resumo']['tempo_resposta_medio']
         print(f"\n3. Comparação:")
         if speedup > 1:
-            print(f"   → Servidor concorrente foi {speedup:.2f}x mais rápido")
+            print(f"   -> Servidor concorrente foi {speedup:.2f}x mais rápido")
         else:
-            print(f"   → Servidor sequencial foi {1/speedup:.2f}x mais rápido")
+            print(f"   -> Servidor sequencial foi {1/speedup:.2f}x mais rápido")
 
 def exemplo_comparacao_cenarios():
     """Compara diferentes cenários de processamento"""
@@ -163,7 +163,7 @@ def exemplo_comparacao_cenarios():
             print(f"   Tempo médio: {tempo_medio:.4f}s")
             print(f"   Min/Max: {min(tempos):.4f}s / {max(tempos):.4f}s")
         else:
-            print("   ✗ Falha nos testes")
+            print("   [ERRO] Falha nos testes")
 
 if __name__ == "__main__":
     print("=== Exemplos de Uso do Cliente HTTP ===")
@@ -171,7 +171,7 @@ if __name__ == "__main__":
     print()
     
     try:
-        exemplo_basico()
+        exemplo_básico()
         exemplo_endpoints()
         exemplo_teste_carga()
         exemplo_comparacao_cenarios()

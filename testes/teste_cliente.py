@@ -30,7 +30,7 @@ class TestadorCarga:
         self.lock = threading.Lock()
         
     def teste_requisicao_unica(self, metodo='GET', caminho='/', id_cliente=None):
-        #Executa um unico teste de requisicao
+        #Executa um único teste de requisição
         resultado = self.cliente.enviar_requisicao(metodo, caminho)
         resultado['id_cliente'] = id_cliente
         resultado['timestamp'] = time.time()
@@ -41,11 +41,11 @@ class TestadorCarga:
         return resultado
     
     def teste_concorrente(self, num_clientes, requisicoes_por_cliente, metodo='GET', caminho='/'):
-        #Executa teste com multiplos clientes simultaneos
+        #Executa teste com múltiplos clientes simultâneos
         threads = []
         self.resultados = []
         
-        print(f"Iniciando teste com {num_clientes} clientes, {requisicoes_por_cliente} requisicoes cada")
+        print(f"Iniciando teste com {num_clientes} clientes, {requisicoes_por_cliente} requisições cada")
         
         tempo_inicio = time.time()
         
@@ -77,7 +77,7 @@ class TestadorCarga:
                 print(f"Cliente {id_cliente}: {id_req + 1}/{num_requisicoes} requisicoes completadas")
     
     def _calcular_resumo(self):
-        #Calcula estatisticas dos resultados
+        #Calcula estatísticas dos resultados
         if not self.resultados:
             return {}
         
@@ -156,7 +156,7 @@ class TestadorProjeto:
             cliente_teste = ClienteHTTP('76.1.0.10', 80)
             resultado = cliente_teste.enviar_requisicao('GET', '/')
             if resultado['codigo_status'] == 200:
-                print("🐳 Ambiente Docker detectado (comunicação interna)")
+                print("[DOCKER] Ambiente Docker detectado (comunicação interna)")
                 return 'docker'
         except:
             pass
@@ -166,12 +166,12 @@ class TestadorProjeto:
             cliente_teste = ClienteHTTP('localhost', 8080)
             resultado = cliente_teste.enviar_requisicao('GET', '/')
             if resultado['codigo_status'] == 200:
-                print("💻 Ambiente local detectado (host->Docker)")
+                print("[LOCAL] Ambiente local detectado (host->Docker)")
                 return 'local'
         except:
             pass
         
-        print("❌ Nenhum servidor encontrado")
+        print("[ERRO] Nenhum servidor encontrado")
         return None
     
     def teste_conectividade_basica(self, ambiente='docker'):
@@ -190,33 +190,33 @@ class TestadorProjeto:
                 resultado = cliente.enviar_requisicao('GET', '/')
                 
                 if resultado['codigo_status'] == 200:
-                    print(f"   ✅ Conectividade OK - Tempo: {resultado['tempo_resposta']:.3f}s")
+                    print(f"   [SUCESSO] Conectividade OK - Tempo: {resultado['tempo_resposta']:.3f}s")
                     
                     #Parse da resposta JSON
                     try:
                         dados = json.loads(resultado['corpo'])
-                        print(f"   📄 Tipo servidor: {dados.get('tipo_servidor', 'N/A')}")
+                        print(f"   [DOCUMENTO] Tipo servidor: {dados.get('tipo_servidor', 'N/A')}")
                         print(f"   🔢 Requisições processadas: {dados.get('contador_requisicoes', 'N/A')}")
                         print(f"   🆔 ID válido: {dados.get('id_customizado_valido', 'N/A')}")
                     except json.JSONDecodeError:
-                        print(f"   📄 Resposta: {resultado['corpo'][:100]}...")
+                        print(f"   [DOCUMENTO] Resposta: {resultado['corpo'][:100]}...")
                         
                 else:
-                    print(f"   ❌ Erro: Status {resultado['codigo_status']}")
+                    print(f"   [ERRO] Erro: Status {resultado['codigo_status']}")
                     
             except Exception as e:
-                print(f"   ❌ Falha na conexão: {str(e)}")
+                print(f"   [ERRO] Falha na conexão: {str(e)}")
     
     def teste_endpoints(self, ambiente='docker'):
         #Testa todos os endpoints de ambos servidores
         print("\n" + "="*60)
-        print("🎯 TESTE DE ENDPOINTS")
+        print("[TESTE] TESTE DE ENDPOINTS")
         print("="*60)
         
         servidores = self.servidores if ambiente == 'docker' else self.servidores_local
         
         for tipo, config in servidores.items():
-            print(f"\n🖥️ {config['nome']}")
+            print(f"\n[SERVIDOR] {config['nome']}")
             print("-" * 40)
             
             cliente = ClienteHTTP(config['ip'], config['porta'])
@@ -230,7 +230,7 @@ class TestadorProjeto:
                     status = resultado['codigo_status']
                     
                     if status == 200:
-                        emoji = "✅" if tempo <= endpoint['tempo_esperado'] else "⚠️"
+                        emoji = "[SUCESSO]" if tempo <= endpoint['tempo_esperado'] else "[AVISO]"
                         print(f"     {emoji} Status: {status} | Tempo: {tempo:.3f}s")
                         
                         #Salvar resultado para análise
@@ -242,7 +242,7 @@ class TestadorProjeto:
                             'sucesso': True
                         })
                     else:
-                        print(f"     ❌ Status: {status} | Tempo: {tempo:.3f}s")
+                        print(f"     [ERRO] Status: {status} | Tempo: {tempo:.3f}s")
                         self.resultados.append({
                             'servidor': tipo,
                             'endpoint': endpoint['path'],
@@ -252,7 +252,7 @@ class TestadorProjeto:
                         })
                         
                 except Exception as e:
-                    print(f"     ❌ Erro: {str(e)}")
+                    print(f"     [ERRO] Erro: {str(e)}")
                     self.resultados.append({
                         'servidor': tipo,
                         'endpoint': endpoint['path'],
@@ -277,7 +277,7 @@ class TestadorProjeto:
         ]
         
         for tipo, config in servidores.items():
-            print(f"\n🖥️ {config['nome']}")
+            print(f"\n[SERVIDOR] {config['nome']}")
             print("-" * 40)
             
             for caso in casos_teste:
@@ -293,19 +293,19 @@ class TestadorProjeto:
                         valido = dados.get('id_customizado_valido', False)
                         
                         if valido == caso['deveria_passar']:
-                            print(f"     ✅ Validação correta: {valido}")
+                            print(f"     [SUCESSO] Validação correta: {valido}")
                         else:
-                            print(f"     ❌ Validação incorreta: esperado {caso['deveria_passar']}, obteve {valido}")
+                            print(f"     [ERRO] Validação incorreta: esperado {caso['deveria_passar']}, obteve {valido}")
                     else:
-                        print(f"     ❌ Erro: Status {resultado['codigo_status']}")
+                        print(f"     [ERRO] Erro: Status {resultado['codigo_status']}")
                         
                 except Exception as e:
-                    print(f"     ❌ Erro: {str(e)}")
+                    print(f"     [ERRO] Erro: {str(e)}")
     
     def teste_concorrencia(self, ambiente='docker'):
         #Testa capacidade de concorrência dos servidores
         print("\n" + "="*60)
-        print("⚡ TESTE DE CONCORRÊNCIA")
+        print("TESTE DE CONCORRÊNCIA")
         print("="*60)
         
         servidores = self.servidores if ambiente == 'docker' else self.servidores_local
@@ -320,7 +320,7 @@ class TestadorProjeto:
             print("-" * 50)
             
             for tipo, config in servidores.items():
-                print(f"  🖥️ {config['nome']}")
+                print(f"  [SERVIDOR] {config['nome']}")
                 
                 try:
                     testador = TestadorCarga(config['ip'], config['porta'])
@@ -332,21 +332,21 @@ class TestadorProjeto:
                     )
                     
                     resumo = resultado['resumo']
-                    print(f"     📊 Sucesso: {resumo['requisicoes_sucesso']}/{resumo['total_requisicoes']}")
-                    print(f"     ⏱️ Tempo médio: {resumo['tempo_resposta_medio']:.3f}s")
+                    print(f"     [ESTATISTICA] Sucesso: {resumo['requisicoes_sucesso']}/{resumo['total_requisicoes']}")
+                    print(f"     [TEMPO] Tempo médio: {resumo['tempo_resposta_medio']:.3f}s")
                     print(f"     📈 Taxa sucesso: {resumo['taxa_sucesso']:.1f}%")
                     
                 except Exception as e:
-                    print(f"     ❌ Erro: {str(e)}")
+                    print(f"     [ERRO] Erro: {str(e)}")
     
-    def relatorio_comparativo(self):
+    def relatório_comparativo(self):
         #Gera relatório comparativo dos resultados
         print("\n" + "="*60)
-        print("📊 RELATÓRIO COMPARATIVO")
+        print("[ESTATÍSTICA] RELATÓRIO COMPARATIVO")
         print("="*60)
         
         if not self.resultados:
-            print("❌ Nenhum resultado disponível para análise")
+            print("[ERRO] Nenhum resultado disponível para análise")
             return
         
         #Agrupar por endpoint
@@ -376,7 +376,7 @@ class TestadorProjeto:
     
     def executar_tudo(self, ambiente=None):
         #Executa todos os testes
-        print("🚀 TESTADOR COMPLETO DO PROJETO REDES II")
+        print("[EXECUÇÃO] TESTADOR COMPLETO DO PROJETO REDES II")
         print("Matrícula: 20239057601")
         print("Aluno: Raildom")
         print(f"Data/Hora: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -385,7 +385,7 @@ class TestadorProjeto:
         if ambiente is None:
             ambiente = self.detectar_ambiente()
             if ambiente is None:
-                print("❌ Nenhum servidor disponível. Certifique-se de que os servidores estejam rodando.")
+                print("[ERRO] Nenhum servidor disponível. Certifique-se de que os servidores estejam rodando.")
                 return False
 
         #Executar testes
@@ -393,7 +393,7 @@ class TestadorProjeto:
         self.teste_endpoints(ambiente)
         self.teste_validacao_cabecalho(ambiente)
         self.teste_concorrencia(ambiente)
-        self.relatorio_comparativo()
+        self.relatório_comparativo()
         
         print("\n" + "="*60)
         print("🎉 TODOS OS TESTES CONCLUÍDOS!")
@@ -428,7 +428,7 @@ def main():
         if ambiente is None:
             ambiente = testador.detectar_ambiente()
             if ambiente is None:
-                print("❌ Nenhum servidor disponível")
+                print("[ERRO] Nenhum servidor disponível")
                 return
         
         #Executar testes específicos

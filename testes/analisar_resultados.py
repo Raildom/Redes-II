@@ -458,9 +458,9 @@ class ResultsAnalyzer:
                 if conc_data['response_time_mean'] > 0:
                     speedup = seq_data['response_time_mean'] / conc_data['response_time_mean']
                     if speedup > 1:
-                        report.append(f"    → Servidor concorrente é {speedup:.2f}x mais rápido")
+                        report.append(f"    -> Servidor concorrente é {speedup:.2f}x mais rápido")
                     else:
-                        report.append(f"    → Servidor sequencial é {1/speedup:.2f}x mais rápido")
+                        report.append(f"    -> Servidor sequencial é {1/speedup:.2f}x mais rápido")
             
             report.append("")
         

@@ -169,13 +169,13 @@ class TestadorAutomatizado:
                 resultado = cliente.enviar_requisicao('GET', '/')
                 
                 if resultado['sucesso']:
-                    print(f"  ✓ Conectividade OK - Status: {resultado['codigo_status']}")
-                    print(f"  ✓ Tempo de resposta: {resultado['tempo_resposta']:.4f}s")
+                    print(f"  [SUCESSO] Conectividade OK - Status: {resultado['codigo_status']}")
+                    print(f"  [SUCESSO] Tempo de resposta: {resultado['tempo_resposta']:.4f}s")
                 else:
-                    print(f"  ✗ Erro de conectividade: {resultado.get('erro', 'Erro desconhecido')}")
+                    print(f"  [ERRO] Erro de conectividade: {resultado.get('erro', 'Erro desconhecido')}")
                     
             except Exception as e:
-                print(f"  ✗ Erro: {e}")
+                print(f"  [ERRO] Erro: {e}")
 
 if __name__ == "__main__":
     testador = TestadorAutomatizado()
